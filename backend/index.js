@@ -6,7 +6,16 @@ const authRoutes = require("./routes/auth.routes");
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://user-authentication-iqgverlwa-absara-vs-projects.vercel.app'],
+  origin: function(origin, callback) {
+    const allowedOrigins = ['http://localhost:5173'];
+    const vercelPattern = /https:\/\/[\w-]+-[\w-]+-[\w-]+\.vercel\.app/;
+    
+    if (!origin || allowedOrigins.includes(origin) || vercelPattern.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
